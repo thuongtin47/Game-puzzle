@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Màn 2</title>
+    <link rel="stylesheet" href="css/m2.css">
+</head>
+
+<body>
+    <audio>
+        <source src="Alan Walker - Dreamer [NCS Release].mp3" type="audio/mp3" />
+    </audio>
+    <center><img src="img/m1.jpg" alt=""></center>
+    <div class="board">
+
+        <button onclick="move( 0, 0)" id="b00" class="bth">1</button>
+        <button onclick="move( 0, 1)" id="b01" class="bth">2</button>
+        <button onclick="move( 0, 2)" id="b02" class="bth">3</button>
+        <button onclick="move( 0, 3)" id="b03" class="bth">4</button>
+        <br>
+        <button onclick="move( 1, 0)" id="b10" class="bth">5</button>
+        <button onclick="move( 1, 1)" id="b11" class="bth">6</button>
+        <button onclick="move( 1, 2)" id="b12" class="bth">7</button>
+        <button onclick="move( 1, 3)" id="b13" class="bth">8</button>
+        <br>
+        <button onclick="move( 2, 0)" id="b20" class="bth">9</button>
+        <button onclick="move( 2, 1)" id="b21" class="bth">10</button>
+        <button onclick="move( 2, 2)" id="b22" class="bth">11</button>
+        <button onclick="move( 2, 3)" id="b23" class="bth">12</button>
+        <br>
+        <button onclick="move( 3, 0)" id="b30" class="bth">13</button>
+        <button onclick="move( 3, 1)" id="b31" class="bth">14</button>
+        <button onclick="move( 3, 2)" id="b32" class="bth">15</button>
+        <button onclick="move( 3, 3)" id="b33" class="bth">16</button>
+    </div>
+    <br>
+    <div class="nut">
+
+        <button id="backward">
+            <a href="xm1.html"> 3 x 3 ◀</a>
+        </button>
+        <button onclick="reload()"> ↺</button>
+        <button id="upto5" hidden>
+            <a href="xm3.html">▶ 5 x 5</a>
+        </button>
+        <br>
+        <button>
+            <a href="trogiup2.html">�</a>
+        </button>
+        <button onclick="playAudio()">♫</button>
+        <button onclick="muteVolume()">🔕</button>
+        <br>
+        <button onclick="doiMau()">Color</button>
+        <button onclick="increaseVolume()">(+)</button>
+        <button onclick="decreaseVolume()">(-)</button>
+    </div>
+
+
+    <script>
+
+        //khai báo các biến
+        const data = [
+            ["1", "2", "3", "4"],
+            ["5", "6", "7", "8"],
+            ["9", "10", "11", "12"],
+            ["13", "14", "15", " "],
+
+        ];
+        const ketQua = [
+            ["1", "2", "3", "4"],
+            ["5", "6", "7", "8"],
+            ["9", "10", "11", "12"],
+            ["13", "14", "15", " "],
+
+        ];
+        // mảng các button
+        const b = [
+            [document.getElementById("b00"),
+            document.getElementById("b01"),
+            document.getElementById("b02"),
+            document.getElementById("b03")],
+
+            [document.getElementById("b10"),
+            document.getElementById("b11"),
+            document.getElementById("b12"),
+            document.getElementById("b13")],
+
+            [document.getElementById("b20"),
+            document.getElementById("b21"),
+            document.getElementById("b22"),
+            document.getElementById("b23")],
+
+            [document.getElementById("b30"),
+            document.getElementById("b31"),
+            document.getElementById("b32"),
+            document.getElementById("b33")],
+        ]
+        //----------------------------------------------
+
+        function ranInt(n) {
+            return Math.floor(Math.random() * n);
+        }
+        //Di chuyển ngẫu nhiên quân cờ, đúng luật
+        function ranMove() {
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    data[i][j] = ketQua[i][j];
+                }
+            }
+            //vị trí ô trống
+            let u = 3, v = 3;
+            let soLan = 0;
+            //lặp lại nhiều lần
+            do {
+                switch (ranInt(2)) {
+                    //dời qua bên trái
+                    case 0:
+                        if (namTrong(u, v - 1)) {
+                            data[u][v] = data[u][v - 1];
+                            data[u][v - 1] = " ";
+                            v = v - 1;
+                        }
+                        break;
+                    //dời lên trên
+                    case 1:
+                        if (namTrong(u - 1, v)) {
+                            data[u][v] = data[u - 1][v];
+                            data[u - 1][v] = " ";
+                            u = u - 1;
+                        }
+                        break;
+                    //dời xuống dưới
+                    case 2:
+                        if (namTrong(u + 1, v)) {
+                            data[u][v] = data[u + 1][v];
+                            data[u + 1][v] = " ";
+                            u = u + 1;
+                        }
+                        break;
+                    //dời qua phải
+                    case 3:
+                        if (namTrong(u, v + 1)) {
+                            data[u][v] = data[u][v + 1];
+                            data[u][v + 1] = " ";
+                            v = v + 1;
+                        }
+                        break;
+                }
+                soLan++;
+
+            } while (soLan < 5);
+            veSo();
+        }
+        //------------------------------
+
+        function checkWin() {
+            let dem = 0;
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (data[i][j] != ketQua[i][j]) {
+                        dem++;
+                    }
+                }
+            }
+            if (dem == 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        //kiem tra xem có nằm trong hay không
+        function namTrong(i, j) {
+            if (i >= 0 && i < 4 && j >= 0 && j < 4) return true;
+            else return false;
+        }
+        //di chuyen quan co
+        function move(i, j) {
+            if (namTrong(i, j + 1) && data[i][j + 1] == " ") {
+                data[i][j + 1] = data[i][j];
+                data[i][j] = " ";
+            } else if (namTrong(i, j - 1) && data[i][j - 1] == " ") {
+                data[i][j - 1] = data[i][j];
+                data[i][j] = " ";
+            } else if (namTrong(i + 1, j) && data[i + 1][j] == " ") {
+                data[i + 1][j] = data[i][j];
+                data[i][j] = " ";
+            }
+            else if (namTrong(i - 1, j) && data[i - 1][j] == " ") {
+                data[i - 1][j] = data[i][j];
+                data[i][j] = " ";
+            }
+            veSo();
+            if (checkWin() == true) {
+                alert("CHÚC MỪNG BẠN ĐÃ THẮNG !");
+                // xử lí sau khi thắng 
+                document.getElementById("upto5").hidden = false;
+            }
+        }
+        //load lại màn để chơi lại
+        function reload() {
+            location.reload();
+        }
+        //---------------------------------------------------------------------
+        function veSo() {
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    b[i][j].textContent = data[i][j];
+                }
+            }
+        }
+        veSo();
+        //------------------------------------------------------------
+
+        //khai báo các hàm
+        //---------------------------------------
+        const bangMau = ["#EFD4F3", "#90EEFF", "#EFB3D7", "#A5F1DE"];
+        let mau = 0;
+        const audio = document.querySelector('audio');
+        audio.currentTime = 2;
+
+        function playAudio() {
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        function increaseVolume() {
+            if (audio.volume < 1) {
+                audio.volume = parseFloat(audio.volume + 0.1).toFixed(1);
+            }
+        }
+
+        function decreaseVolume() {
+            if (audio.volume > 0) {
+                audio.volume = parseFloat(audio.volume - 0.1).toFixed(1);
+            }
+        }
+
+        function muteVolume() {
+            if (audio.muted) {
+                audio.muted = false;
+            } else {
+                audio.muted = true;
+            }
+        }
+        function doiMau() {
+            if (mau < bangMau.length - 2) mau++;
+            else mau = 0;
+            veMauNen();
+
+        }
+        function veMauNen() {
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if ((i + j) % 2 == 0) b[i][j].style.backgroundColor = bangMau[mau];
+                    else b[i][j].style.backgroundColor = bangMau[mau + 1];
+
+                }
+            }
+        }
+        veMauNen();
+        ranMove();
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>

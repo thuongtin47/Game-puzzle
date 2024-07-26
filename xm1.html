@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle 3x3</title>
+    <link rel="stylesheet" href="css/m1.css">
+</head>
+
+<body>
+
+    <audio>
+        <source src="Alan Walker - Dreamer [NCS Release].mp3" type="audio/mp3" />
+    </audio>
+
+    <head>
+        <center><img src="img/h2.jpg" alt=""></center>
+    </head>
+
+
+    <!--Tạo 1 bảng 3 x 3 các nút-->
+    <div class="board">
+        <!-- Hàng 0-->
+        <button onclick="move(0 , 0)" id="b00" class="btn">1</button>
+        <button onclick="move(0 , 1)" id="b01" class="btn">2</button>
+        <button onclick="move( 0, 2)" id="b02" class="btn">3</button>
+        <br>
+        <!-- Hàng 1-->
+        <button onclick="move( 1, 0)" id="b10" class="btn">4</button>
+        <button onclick="move( 1, 1)" id="b11" class="btn">5</button>
+        <button onclick="move( 1,2 )" id="b12" class="btn">6</button>
+        <br>
+        <!-- Hàng 2 -->
+        <button onclick="move( 2, 0)" id="b20" class="btn">7</button>
+        <button onclick="move( 2, 1)" id="b21" class="btn">8</button>
+        <button onclick="move( 2, 2)" id="b22" class="btn">9</button>
+    </div>
+    <br>
+    <div class="nut">
+        <button onclick="doiMau()">Color</button>
+        <button onclick="reload()"> ↺</button>
+        <button id="upto4" hidden>
+            <a href="xm2.html">▶ 4 x 4 </a>
+        </button>
+        <button>
+            <a href="trogiup1.html">�</a>
+        </button>
+        <br>
+        <button onclick="playAudio()">♫</button>
+        <button onclick="muteVolume()">🔕</button>
+        <button onclick="increaseVolume()">(+)</button>
+        <button onclick="decreaseVolume()">(-)</button>
+    </div>
+    <script>
+        //khai báo các biến
+        const data = [
+            ["1", "2", "3"],
+            ["4", "5", "6"],
+            ["7", "8", " "],
+        ];
+        const ketQua = [
+            ["1", "2", "3"],
+            ["4", "5", "6"],
+            ["7", "8", " "],
+        ];
+        //mảng 2 chiều 3x3 các button
+        const b = [
+            [document.getElementById("b00"),
+            document.getElementById("b01"),
+            document.getElementById("b02")],
+
+            [document.getElementById("b10"),
+            document.getElementById("b11"),
+            document.getElementById("b12")],
+
+            [document.getElementById("b20"),
+            document.getElementById("b21"),
+            document.getElementById("b22")],
+        ]
+
+        //------------------------------------------------
+        //hàm này cho số ngẫu nhiên 0, 1, 2, 3 .... n-1
+        function ranInt(n) {
+            return Math.floor(Math.random() * n);
+        }
+        //Di chuyển ngẫu nhiên quân cờ, đúng luật
+        function ranMove() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    data[i][j] = ketQua[i][j];
+                }
+            }
+            //vị trí ô trống
+            let u = 2, v = 2;
+            let soLan = 0;
+            //lặp lại nhiều lần
+            do {
+                switch (ranInt(3)) {
+                    //dời qua bên trái
+                    case 0:
+                        if (namTrong(u, v - 1)) {
+                            data[u][v] = data[u][v - 1];
+                            data[u][v - 1] = " ";
+                            v = v - 1;
+                        }
+                        break;
+                    //dời lên trên
+                    case 1:
+                        if (namTrong(u - 1, 1)) {
+                            data[u][v] = data[u - 1][v];
+                            data[u - 1][v] = " ";
+                            u = u - 1;
+                        }
+                        break;
+                    //dời xuống dưới
+                    case 2:
+                        if (namTrong(u + 1, 1)) {
+                            data[u][v] = data[u + 1][v];
+                            data[u + 1][v] = " ";
+                            u = u + 1;
+                        }
+                        break;
+                    //dời qua phải
+                    case 3:
+                        if (namTrong(u, v + 1)) {
+                            data[u][v] = data[u][v + 1];
+                            data[u][v + 1] = " ";
+                            v = v + 1;
+                        }
+                        break;
+
+
+
+                }
+                soLan++;
+            } while (soLan < 5);
+
+            veSo();
+        }
+
+        //kiểm tra thắng thua. So sánh data và kết quả, nếu 9 ô giống nhau là thắng
+        function checkWin() {
+            let dem = 0;
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (data[i][j] != ketQua[i][j]) {
+                        dem++;
+                    }
+                }
+            }
+            if (dem == 0) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+        //----------------------------------------------------------
+        function namTrong(i, j) {
+            if (i >= 0 && i < 3 && j >= 0 && j < 3) return true;
+            else return false;
+        }
+        //di chuyển quân cờ
+        function move(i, j) {
+            if (namTrong(i, j + 1) && data[i][j + 1] == " ") {
+                data[i][j + 1] = data[i][j];
+                data[i][j] = " ";
+            } else if (namTrong(i, j - 1) && data[i][j - 1] == " ") {
+                data[i][j - 1] = data[i][j];
+                data[i][j] = " ";
+            } else if (namTrong(i + 1, j) && data[i + 1][j] == " ") {
+                data[i + 1][j] = data[i][j];
+                data[i][j] = " ";
+            }
+            else if (namTrong(i - 1, j) && data[i - 1][j] == " ") {
+                data[i - 1][j] = data[i][j];
+                data[i][j] = " ";
+            }
+            veSo();
+            if (checkWin() == true) {
+                alert("CHÚC MỪNG BẠN ĐÃ THẮNG !");
+                document.getElementById("upto4").hidden = false;
+
+            }
+        }
+
+        //load lại màn để chơi lại
+        function reload() {
+            location.reload();
+        }
+        //-------------------------------------------------------------------
+        function veSo() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    b[i][j].textContent = data[i][j];
+                }
+            }
+        }
+        veSo();
+        //khai báo các hàm
+        //---------------------------------------
+        const bangMau = ["#FCDDD8", "#91FB54", "#FF596F", "#D4E4FD"];
+        let mau = 0;
+        const audio = document.querySelector('audio');
+        audio.currentTime = 0;
+        function playAudio() {
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        function increaseVolume() {
+            if (audio.volume < 1) {
+                audio.volume = parseFloat(audio.volume + 0.1).toFixed(1);
+            }
+        }
+
+        function decreaseVolume() {
+            if (audio.volume > 0) {
+                audio.volume = parseFloat(audio.volume - 0.1).toFixed(1);
+            }
+        }
+
+        function muteVolume() {
+            if (audio.muted) {
+                audio.muted = false;
+            } else {
+                audio.muted = true;
+            }
+        }
+        function doiMau() {
+            if (mau < bangMau.length - 2) mau++;
+            else mau = 0;
+            veMauNen();
+
+        }
+        function veMauNen() {
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if ((i + j) % 2 == 0) b[i][j].style.backgroundColor = bangMau[mau];
+                    else b[i][j].style.backgroundColor = bangMau[mau + 1];
+
+                }
+            }
+        }
+        veMauNen();
+        ranMove();
+    </script>
+</body>
+
+</html>
